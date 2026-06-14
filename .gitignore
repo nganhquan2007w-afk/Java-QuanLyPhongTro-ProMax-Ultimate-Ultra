@@ -1,0 +1,39 @@
+# Cấu hình bỏ qua các file không cần thiết khi đẩy lên GitHub
+
+# Compiled class file
+*.class
+
+# Maven
+target/
+*.jar
+*.war
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# IDEs - Eclipse
+.classpath
+.project
+.settings/
+
+# IDEs - IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+
+# IDEs - VS Code
+.vscode/
+
+# Logs and Temporary files
+*.log
+sources.txt
+warnings.txt
+hs_err_pid*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Config files (do not commit local credentials)
+*_config.properties
