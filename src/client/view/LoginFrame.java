@@ -27,8 +27,7 @@ import javax.swing.border.EmptyBorder;
 import com.formdev.flatlaf.themes.FlatMacLightLaf;
 
 /**
- * Giao diện Đăng nhập hệ thống được thiết kế hiện đại, cao cấp (View lớp trong
- * mô hình MVC)
+ * Giao diện Đăng nhập hệ thống (View lớp trong mô hình MVC)
  */
 @SuppressWarnings("serial")
 public final class LoginFrame extends JFrame {

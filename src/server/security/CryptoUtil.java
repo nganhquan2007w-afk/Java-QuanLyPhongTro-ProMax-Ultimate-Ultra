@@ -13,7 +13,6 @@ public class CryptoUtil {
 
     private static final String ALGORITHM = "AES";
     // Khóa bí mật cứng 16 byte (128-bit) dùng cho AES.
-    // Trong thực tế, khóa này nên được lấy từ biến môi trường (Environment Variable).
     private static final byte[] KEY = "QLPhongTroSecret".getBytes(StandardCharsets.UTF_8);
 
     /**

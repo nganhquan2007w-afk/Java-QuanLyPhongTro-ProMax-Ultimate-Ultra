@@ -214,7 +214,44 @@ public class RoomsController {
     }
 
     public void handleExportCSV() {
-        client.util.CSVHelper.exportTableToCSV(view, view.getTable(), "DanhSachPhong.csv");
+        // Load tất cả dữ liệu cần thiết trước khi xuất báo cáo
+        new javax.swing.SwingWorker<Void, Void>() {
+            java.util.List<common.model.Room>    rooms;
+            java.util.List<String[]>             tenants;
+            java.util.List<common.model.Invoice> invoices;
+            long elecPrice  = 3500;
+            long waterPrice = 10000;
+
+            @Override
+            protected Void doInBackground() {
+                try {
+                    rooms    = client.service.RoomService.getRooms();
+                    tenants  = client.service.TenantService.getTenants();
+                    invoices = client.service.InvoiceService.getInvoices(null);
+
+                    // Lấy giá điện/nước thực tế từ server
+                    java.util.List<String[]> svcs = client.service.ServicesService.getServices();
+                    if (svcs != null) {
+                        for (String[] s : svcs) {
+                            try {
+                                long val = (long) Double.parseDouble(s[2].replace(",", ""));
+                                if (s[1].toLowerCase().contains("điện")) elecPrice  = val;
+                                if (s[1].toLowerCase().contains("nước")) waterPrice = val;
+                            } catch (Exception ignored) {}
+                        }
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                client.util.CSVHelper.exportFullReport(
+                    view, rooms, tenants, invoices, elecPrice, waterPrice);
+            }
+        }.execute();
     }
 
     public void handleImportCSV() {

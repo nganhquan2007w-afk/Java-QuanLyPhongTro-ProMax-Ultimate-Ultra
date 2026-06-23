@@ -21,7 +21,7 @@ public class SocketServer {
         ServerLogger.info("Bắt đầu khởi động Socket Server...");
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
-            ServerLogger.info("Socket Server đang chạy trên cổng " + PORT + "...");
+            ServerLogger.info("Socket Server đang chạy trên port " + PORT + "...");
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();

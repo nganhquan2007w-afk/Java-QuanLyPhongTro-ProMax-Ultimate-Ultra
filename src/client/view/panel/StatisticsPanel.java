@@ -14,11 +14,12 @@ public final class StatisticsPanel extends JPanel {
     private JLabel lblStat1;
     private JLabel lblStat2;
     private JLabel lblStat3;
+    private JLabel lblTenantCount;
     private BarChartComponent barChart;
     private JLabel lblS1Val;
     private JLabel lblS2Val;
     private JLabel lblS3Val;
-    private JLabel lblGrowth; // For revenue comparison
+    private JLabel lblGrowth;
 
     public StatisticsPanel() {
         setLayout(new BorderLayout());
@@ -59,7 +60,7 @@ public final class StatisticsPanel extends JPanel {
         ringCard.add(ringContainer, BorderLayout.CENTER);
 
         // Table / Grid of detailed statuses at the bottom of the card
-        JPanel statusList = new JPanel(new GridLayout(3, 1, 0, 8));
+        JPanel statusList = new JPanel(new GridLayout(4, 1, 0, 8));
         statusList.setOpaque(false);
 
         lblStat1 = new JLabel("\ud83d\udfe2   Phòng đang hoạt động: 0 phòng (0%)");
@@ -74,9 +75,14 @@ public final class StatisticsPanel extends JPanel {
         lblStat3.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         lblStat3.setForeground(new Color(71, 85, 105));
 
+        lblTenantCount = new JLabel("\ud83d\udc64   Tổng số khách đang thuê: 0 người");
+        lblTenantCount.setFont(new Font("Segoe UI", Font.BOLD, 12));
+        lblTenantCount.setForeground(new Color(236, 72, 153));
+
         statusList.add(lblStat1);
         statusList.add(lblStat2);
         statusList.add(lblStat3);
+        statusList.add(lblTenantCount);
         ringCard.add(statusList, BorderLayout.SOUTH);
 
         chartSplit.add(ringCard, BorderLayout.WEST);
@@ -177,6 +183,7 @@ public final class StatisticsPanel extends JPanel {
     public JLabel getLblStat1() { return lblStat1; }
     public JLabel getLblStat2() { return lblStat2; }
     public JLabel getLblStat3() { return lblStat3; }
+    public JLabel getLblTenantCount() { return lblTenantCount; }
     public BarChartComponent getBarChart() { return barChart; }
     public JLabel getLblS1Val() { return lblS1Val; }
     public JLabel getLblS2Val() { return lblS2Val; }

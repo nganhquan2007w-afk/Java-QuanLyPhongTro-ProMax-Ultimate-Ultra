@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 /**
  * Model đại diện cho thông tin tài khoản người dùng trong hệ thống
+ * Serializable là interface trong Java dùng để cho phép đối tượng
+ * chuyển thành dạng chuỗi byte để lưu trữ hoặc truyền qua mạng.
  */
 public class User implements Serializable {
     private static final long serialVersionUID = 1L;

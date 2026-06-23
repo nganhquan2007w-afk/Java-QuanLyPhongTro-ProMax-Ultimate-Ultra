@@ -5,6 +5,7 @@ import common.model.Room;
 import common.model.Invoice;
 import client.service.RoomService;
 import client.service.InvoiceService;
+import client.service.TenantService;
 
 import javax.swing.SwingWorker;
 import java.util.List;
@@ -22,11 +23,13 @@ public class StatisticsController {
         new SwingWorker<Void, Void>() {
             List<Room> rooms;
             List<Invoice> invoices;
+            List<String[]> tenants;
 
             @Override
             protected Void doInBackground() throws Exception {
                 rooms = RoomService.getRooms();
                 invoices = InvoiceService.getInvoices(null);
+                tenants = TenantService.getTenants();
                 return null;
             }
 
@@ -35,31 +38,54 @@ public class StatisticsController {
                 try {
                     if (rooms != null) {
                         int total = rooms.size();
-                        long rented = rooms.stream().filter(r -> {
+
+                        // --- Đếm phòng có khách THỰC TẾ từ danh sách tenant (không dùng status phòng) ---
+                        java.util.Set<String> rentedRoomIds = new java.util.HashSet<>();
+                        if (tenants != null) {
+                            for (String[] t : tenants) {
+                                if (t[7] != null && !t[7].trim().isEmpty()) {
+                                    rentedRoomIds.add(t[7].trim());
+                                }
+                            }
+                        }
+                        long rented = rentedRoomIds.size();
+
+                        // Phòng bảo trì/sửa chữa: vẫn dùng status (không phụ thuộc tenant)
+                        long fixing = rooms.stream().filter(r -> {
                             String s = r.getStatus();
-                            return "Đã thuê".equalsIgnoreCase(s) || "Đang thuê".equalsIgnoreCase(s) || "Đã đầy".equalsIgnoreCase(s);
+                            return "Đang sửa chữa".equalsIgnoreCase(s)
+                                || "Đang bảo trì".equalsIgnoreCase(s)
+                                || "Bảo trì".equalsIgnoreCase(s);
                         }).count();
-                        long empty = rooms.stream().filter(r -> {
-                            String s = r.getStatus();
-                            return "Còn trống".equalsIgnoreCase(s) || "Trống".equalsIgnoreCase(s) || "Đang trống".equalsIgnoreCase(s);
-                        }).count();
-                        long fixing = rooms.stream().filter(r -> "Đang sửa chữa".equalsIgnoreCase(r.getStatus())).count();
+
+                        long empty = total - rented - fixing;
+                        if (empty < 0) empty = 0;
 
                         int percentRented = total == 0 ? 0 : (int) ((rented * 100) / total);
-                        int percentEmpty = total == 0 ? 0 : (int) ((empty * 100) / total);
+                        int percentEmpty  = total == 0 ? 0 : (int) ((empty  * 100) / total);
                         int percentFixing = total == 0 ? 0 : (int) ((fixing * 100) / total);
 
                         if (view.getRing() != null) {
                             view.getRing().setProgress(percentRented);
                         }
                         if (view.getLblStat1() != null) {
-                            view.getLblStat1().setText(String.format("🟢   Phòng đang hoạt động: %d phòng (%d%%)", rented, percentRented));
+                            view.getLblStat1().setText(String.format("🟢   Phòng đang có khách: %d phòng (%d%%)", rented, percentRented));
                         }
                         if (view.getLblStat2() != null) {
                             view.getLblStat2().setText(String.format("⚪   Phòng trống sẵn sàng: %d phòng (%d%%)", empty, percentEmpty));
                         }
                         if (view.getLblStat3() != null) {
                             view.getLblStat3().setText(String.format("🛠️   Phòng đang sửa chữa: %d phòng (%d%%)", fixing, percentFixing));
+                        }
+
+                        // Số khách thuê thực tế
+                        if (view.getLblTenantCount() != null) {
+                            long activeTenants = (tenants == null) ? 0 :
+                                tenants.stream()
+                                    .filter(t -> t[7] != null && !t[7].trim().isEmpty())
+                                    .count();
+                            view.getLblTenantCount().setText(
+                                String.format("👤   Tổng số khách đang thuê: %d người", activeTenants));
                         }
                     }
 
